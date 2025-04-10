@@ -1,0 +1,196 @@
+from PyQt5.QtWidgets import ( # type: ignore
+    QWidget, QLabel, QLineEdit, QVBoxLayout,
+    QFormLayout, QComboBox, QPushButton, QMessageBox,
+    QGroupBox, QFileDialog, QHBoxLayout
+)
+from PyQt5.QtGui import QFont # type: ignore
+from PyQt5.QtCore import pyqtSignal # type: ignore
+import configparser
+import os
+import shutil
+
+
+
+
+class ProjectSection(QWidget):
+    projectSaved = pyqtSignal()
+
+    def __init__(self, available_tools=None):
+        super().__init__()
+        self.available_tools = available_tools or ["Cadence", "Synopsys", "Open Source"]
+        self.initUI()
+
+    def initUI(self):
+        layout = QVBoxLayout()
+
+        # Title
+        title = QLabel("Project Setup")
+        title.setFont(QFont("Georgia", 16, QFont.Bold))
+        layout.addWidget(title)
+
+        # Form Fields
+        form_layout = QFormLayout()
+
+        self.project_name_input = QLineEdit()
+        self.tech_node_dropdown = QComboBox()
+        self.tech_node_dropdown.addItems(["180nm", "130nm", "65nm", "28nm", "7nm"])
+
+        self.rtl_path_input = QLineEdit()
+        self.lef_path_input = QLineEdit()
+        self.lib_path_input = QLineEdit()
+        self.sdc_path_input = QLineEdit()
+        self.scripts_path_input = QLineEdit()
+        self.scripts_path_input.setPlaceholderText("optional")
+
+        rtl_btn = QPushButton("Browse")
+        rtl_btn.clicked.connect(lambda: self.select_directory(self.rtl_path_input))
+        lef_btn = QPushButton("Browse")
+        lef_btn.clicked.connect(lambda: self.select_directory(self.lef_path_input))
+        lib_btn = QPushButton("Browse")
+        lib_btn.clicked.connect(lambda: self.select_directory(self.lib_path_input))
+        sdc_btn = QPushButton("Browse")
+        sdc_btn.clicked.connect(lambda: self.select_directory(self.sdc_path_input))
+        scripts_btn = QPushButton("Browse")
+        scripts_btn.clicked.connect(lambda: self.select_directory(self.scripts_path_input))
+
+        self.eda_tool_dropdown = QComboBox()
+        self.eda_tool_dropdown.addItems(self.available_tools)
+
+        form_layout.addRow("Project Name*", self.project_name_input)
+        form_layout.addRow("Technology Node*", self.tech_node_dropdown)
+
+        rtl_layout = QHBoxLayout()
+        rtl_layout.addWidget(self.rtl_path_input)
+        rtl_layout.addWidget(rtl_btn)
+        form_layout.addRow("RTL Directory*", rtl_layout)
+
+        lef_layout = QHBoxLayout()
+        lef_layout.addWidget(self.lef_path_input)
+        lef_layout.addWidget(lef_btn)
+        form_layout.addRow("LEF Directory*", lef_layout)
+
+        lib_layout = QHBoxLayout()
+        lib_layout.addWidget(self.lib_path_input)
+        lib_layout.addWidget(lib_btn)
+        form_layout.addRow("LIB Directory*", lib_layout)
+
+        sdc_layout = QHBoxLayout()
+        sdc_layout.addWidget(self.sdc_path_input)
+        sdc_layout.addWidget(sdc_btn)
+        form_layout.addRow("SDC Directory*", sdc_layout)
+
+        scripts_layout = QHBoxLayout()
+        scripts_layout.addWidget(self.scripts_path_input)
+        scripts_layout.addWidget(scripts_btn)
+        form_layout.addRow("Scripts Directory", scripts_layout)
+
+        form_layout.addRow("EDA Tool Used*", self.eda_tool_dropdown)
+
+        layout.addLayout(form_layout)
+
+        # Error label
+        self.error_label = QLabel()
+        self.error_label.setStyleSheet("color: red; font-weight: bold;")
+        layout.addWidget(self.error_label)
+
+        self.setLayout(layout)
+
+    def select_directory(self, line_edit):
+        path = QFileDialog.getExistingDirectory(self, "Select Directory")
+        if path:
+            line_edit.setText(path)
+
+    def is_valid(self):
+        def check_dir(path, name, required_exts):
+            if not os.path.isdir(path):
+                self.error_label.setText(f"{name} path is not a valid directory.")
+                return False
+            files = os.listdir(path)
+            if not files:
+                self.error_label.setText(f"{name} directory is empty.")
+                return False
+            if not any(file.endswith(tuple(required_exts)) for file in files):
+                self.error_label.setText(f"{name} must contain at least one {', '.join(required_exts)} file.")
+                return False
+            return True
+
+        if not self.project_name_input.text().strip():
+            self.error_label.setText("Project name is required.")
+            return False
+
+        if not check_dir(self.rtl_path_input.text().strip(), "RTL", [".v", ".sv"]):
+            return False
+        if not check_dir(self.lef_path_input.text().strip(), "LEF", [".lef"]):
+            return False
+        if not check_dir(self.lib_path_input.text().strip(), "LIB", [".lib"]):
+            return False
+        if not check_dir(self.sdc_path_input.text().strip(), "SDC", [".sdc"]):
+            return False
+
+        if not self.eda_tool_dropdown.currentText().strip():
+            self.error_label.setText("EDA tool selection is required.")
+            return False
+
+        self.error_label.clear()
+        return True
+
+
+
+
+    def copy_files(self, src_dir, dest_dir, extensions):
+        if os.path.exists(src_dir):
+            os.makedirs(dest_dir, exist_ok=True)
+            for file in os.listdir(src_dir):
+                if any(file.endswith(ext) for ext in extensions):
+                    src_file = os.path.join(src_dir, file)
+                    if os.path.isfile(src_file):
+                        shutil.copy(src_file, dest_dir)
+    def save_project_info(self):
+        if not self.is_valid():
+            return
+
+        config = configparser.ConfigParser()
+        config['PROJECT'] = {
+            'name': self.project_name_input.text().strip(),
+            'tech_node': self.tech_node_dropdown.currentText(),
+            'rtl_dir': self.rtl_path_input.text().strip(),
+            'lef_dir': self.lef_path_input.text().strip(),
+            'lib_dir': self.lib_path_input.text().strip(),
+            'sdc_dir': self.sdc_path_input.text().strip(),
+            'scripts_dir': self.scripts_path_input.text().strip(),
+            'eda_tool': self.eda_tool_dropdown.currentText()
+        }
+
+        config_path = os.path.join("configs", "project_settings.cfg")
+
+
+        with open(config_path, "w") as configfile:
+            config.write(configfile)
+
+        data_dir = os.path.join("flow_gui", "data")
+        user_scripts_dir = os.path.join("flow_gui", "user_scripts")
+        self.copy_files(self.rtl_path_input.text().strip(), os.path.join(data_dir, "rtl"), [".v", ".sv"])
+        self.copy_files(self.lef_path_input.text().strip(), os.path.join(data_dir, "lef"), [".lef"])
+        self.copy_files(self.lib_path_input.text().strip(), os.path.join(data_dir, "lib"), [".lib"])
+        self.copy_files(self.sdc_path_input.text().strip(), os.path.join(data_dir, "sdc"), [".sdc"])
+        # self.copy_files(self.scripts_path_input.setPlaceholderText("optional").text().strip(), os.path.join(user_scripts_dir), [".tcl"])
+        scripts_path = self.scripts_path_input.text().strip()
+        if scripts_path:
+            self.copy_files(scripts_path, os.path.join(user_scripts_dir), [".tcl"])
+
+        self.projectSaved.emit()
+
+
+    def get_data(self):
+        return {
+            "project_name": self.project_name_input.text().strip(),
+            "tech_node": self.tech_node_dropdown.currentText(),
+            "rtl_dir": self.rtl_path_input.text().strip(),
+            "lef_dir": self.lef_path_input.text().strip(),
+            "lib_dir": self.lib_path_input.text().strip(),
+            "sdc_dir": self.sdc_path_input.text().strip(),
+            "scripts_dir": self.scripts_path_input.text().strip(),
+            "eda_tool": self.eda_tool_dropdown.currentText()
+        }
+
+

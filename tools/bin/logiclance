@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Optional: source any launch script (if you use environment modules, etc.)
+LAUNCH_SCRIPT="$HOME/Logic_Lance/flow_gui/configs/launch_cadence_0.sh"
+if [ -f "$LAUNCH_SCRIPT" ]; then
+    source "$LAUNCH_SCRIPT"
+fi
+
+# Now run the Python CLI
+PYTHON=$(which python3)
+SCRIPT="$HOME/Logic_Lance/flow_gui/main.py"
+
+if [ ! -f "$SCRIPT" ]; then
+    echo "Error: CLI script not found at $SCRIPT"
+    exit 1
+fi
+
+exec "$PYTHON" "$SCRIPT" "$@"

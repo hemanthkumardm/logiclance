@@ -1,0 +1,8 @@
+name,email,password,linting,synthesis,lec,pnr,default_emails,team
+sanjay,sanjay.m@sandlogic.com,pass123,no,no,no,yes,hemanthlee2000@gmail.com,pd
+sachin,sachin.k@sandlogic.com,pass234,no,no,no,yes,hemanthlee2000@gmail.com,
+harsha,harsha@sandlogic.com,pass567,yes,yes,yes,no,hemanthlee2000@gmail.com,rtl
+madan,madan@sandlogic.com,pass890,yes,yes,yes,no,hemanthlee2000@gmail.com,rtl
+surya,surya@sandlogic.com,pass789,yes,yes,yes,no,hemanthlee2000@gmail.com,rtl
+hemanth,hemanthlee2000@gmail.com,pass012,yes,yes,yes,yes,hemanthlee2000@gmail.com and sumalatha@sandlogic.com,pd
+manjunath,manjunath@sandlogic.com,pass345,no,no,no,yes,hemanthlee2000@gmail.com,pd

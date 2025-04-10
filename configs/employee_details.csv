@@ -1,0 +1,8 @@
+name,email,password,linting,synthesis,lec,pnr,default_emails,team
+sanjay,sanjay.m@sandlogic.com,9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c,no,no,no,yes,hemanthlee2000@gmail.com,pd
+sachin,sachin.k@sandlogic.com,3c8b8ed3401c4b9b261a52277e6a18cb44e13bdbb13f8e0ddf5dcfa29035340d,no,no,no,yes,hemanthlee2000@gmail.com,pd
+harsha,harsha@sandlogic.com,815292cdc38cb03d04f91680b71b5c0b7454f5e1484ae9155979726255e2773b,yes,yes,yes,no,hemanthlee2000@gmail.com,rtl
+madan,madan@sandlogic.com,f538abfca830d84796cd2b82918862ab09f0874405c65cb03458ae7beabb3bb6,yes,yes,yes,no,hemanthlee2000@gmail.com,rtl
+surya,surya@sandlogic.com,9dbd5c893b5b573a1aa909c8cade58df194310e411c590d9fb0d63431841fd67,yes,yes,yes,no,hemanthlee2000@gmail.com,rtl
+hemanth,hemanthlee2000@gmail.com,1c6b4f2278067b875faa584b186908eb8c93289fbcb1ae3b057f66fc3c48853a,yes,yes,yes,yes,hemanthlee2000@gmail.com and sumalatha@sandlogic.com,pd
+manjunath,manjunath@sandlogic.com,c7cc9c9911b3221c6222b213f37acf1a75e75b02f392488ae481ec6721c7a6cd,no,no,no,yes,hemanthlee2000@gmail.com,pd
