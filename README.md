@@ -39,6 +39,7 @@ Allows users to run flows:
 
 ## 📁 Directory Structure
 
+```
 flow_gui/ 
 ├── cli/ # CLI and shell interface 
 ├── configs/ # setup_config.json, flow_config.json 
@@ -48,7 +49,7 @@ flow_gui/
 ├── logs/ # Execution logs 
 ├── reports/ # Result artifacts 
 ├── user_scripts/ # User-defined TCL overrides
-
+```
 
 ---
 
