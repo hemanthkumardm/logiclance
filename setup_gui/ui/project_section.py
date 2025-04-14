@@ -15,7 +15,8 @@ import shutil
 class ProjectSection(QWidget):
     projectSaved = pyqtSignal()
 
-    def __init__(self, available_tools=None):
+    def __init__(self, available_tools=None, project_name=None):
+        self.project_name = project_name
         super().__init__()
         self.available_tools = available_tools or ["Cadence", "Synopsys", "Open Source"]
         self.initUI()
@@ -31,7 +32,6 @@ class ProjectSection(QWidget):
         # Form Fields
         form_layout = QFormLayout()
 
-        self.project_name_input = QLineEdit()
         self.tech_node_dropdown = QComboBox()
         self.tech_node_dropdown.addItems(["180nm", "130nm", "65nm", "28nm", "7nm"])
 
@@ -56,7 +56,6 @@ class ProjectSection(QWidget):
         self.eda_tool_dropdown = QComboBox()
         self.eda_tool_dropdown.addItems(self.available_tools)
 
-        form_layout.addRow("Project Name*", self.project_name_input)
         form_layout.addRow("Technology Node*", self.tech_node_dropdown)
 
         rtl_layout = QHBoxLayout()
@@ -114,9 +113,6 @@ class ProjectSection(QWidget):
                 return False
             return True
 
-        if not self.project_name_input.text().strip():
-            self.error_label.setText("Project name is required.")
-            return False
 
         if not check_dir(self.rtl_path_input.text().strip(), "RTL", [".v", ".sv"]):
             return False
@@ -145,13 +141,14 @@ class ProjectSection(QWidget):
                     src_file = os.path.join(src_dir, file)
                     if os.path.isfile(src_file):
                         shutil.copy(src_file, dest_dir)
+
+
     def save_project_info(self):
         if not self.is_valid():
             return
 
         config = configparser.ConfigParser()
         config['PROJECT'] = {
-            'name': self.project_name_input.text().strip(),
             'tech_node': self.tech_node_dropdown.currentText(),
             'rtl_dir': self.rtl_path_input.text().strip(),
             'lef_dir': self.lef_path_input.text().strip(),
@@ -161,14 +158,14 @@ class ProjectSection(QWidget):
             'eda_tool': self.eda_tool_dropdown.currentText()
         }
 
-        config_path = os.path.join("configs", "project_settings.cfg")
+        config_path = os.path.join("configs", "projects", f"{self.project_name}", "project_paths.cfg")
 
 
         with open(config_path, "w") as configfile:
             config.write(configfile)
 
-        data_dir = os.path.join("flow_gui", "data")
-        user_scripts_dir = os.path.join("flow_gui", "user_scripts")
+        data_dir = os.path.join("projects", f"{self.project_name}", "data")
+        user_scripts_dir = os.path.join("projects", f"{self.project_name}", "user_scripts")
         self.copy_files(self.rtl_path_input.text().strip(), os.path.join(data_dir, "rtl"), [".v", ".sv"])
         self.copy_files(self.lef_path_input.text().strip(), os.path.join(data_dir, "lef"), [".lef"])
         self.copy_files(self.lib_path_input.text().strip(), os.path.join(data_dir, "lib"), [".lib"])
@@ -183,7 +180,6 @@ class ProjectSection(QWidget):
 
     def get_data(self):
         return {
-            "project_name": self.project_name_input.text().strip(),
             "tech_node": self.tech_node_dropdown.currentText(),
             "rtl_dir": self.rtl_path_input.text().strip(),
             "lef_dir": self.lef_path_input.text().strip(),
@@ -193,4 +189,5 @@ class ProjectSection(QWidget):
             "eda_tool": self.eda_tool_dropdown.currentText()
         }
 
+    # import os
 

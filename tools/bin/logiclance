@@ -1,17 +1,68 @@
+# #!/bin/bash
+
+# # Optional: source any launch script (if you use environment modules, etc.)
+# # LAUNCH_SCRIPT="$HOME/Logic_Lance/configs/projects/"
+# # if [ -f "$LAUNCH_SCRIPT" ]; then
+# #     source "$LAUNCH_SCRIPT"
+# # fi
+
+# # Now run the Python CLI
+# PYTHON=$(which python3)
+# SCRIPT="$HOME/Logic_Lance/flow_gui/main.py"
+
+
+# if [ ! -f "$SCRIPT" ]; then
+#     echo "Error: CLI script not found at $SCRIPT"
+#     exit 1
+# fi
+
+# exec "$PYTHON" "$SCRIPT" "$@"
+
 #!/bin/bash
 
-# Optional: source any launch script (if you use environment modules, etc.)
-LAUNCH_SCRIPT="$HOME/Logic_Lance/flow_gui/configs/launch_cadence_0.sh"
-if [ -f "$LAUNCH_SCRIPT" ]; then
-    source "$LAUNCH_SCRIPT"
+# 👇 Project name is the first argument to the CLI
+
+VERSION=$(cat "$HOME/Logic_Lance/VERSION")
+PROJECT_NAME="$1"
+LOGICLANCE_ROOT="$HOME/Logic_Lance"
+CONFIG_ROOT="$LOGICLANCE_ROOT/configs/projects/$PROJECT_NAME"
+ENV_FILE="$LOGICLANCE_ROOT/projects/$PROJECT_NAME/data/.env_${PROJECT_NAME}.sh"
+# ✅ Export root so Python can use it too
+export LOGICLANCE_ROOT
+export VERSION
+export CONFIG_ROOT
+
+# ✅ Source .env if exists
+if [ -f "$ENV_FILE" ]; then
+    echo "🌱 Sourcing project environment: $ENV_FILE"
+    source "$ENV_FILE"
+else
+    echo "⚠️  Project .env not found: $ENV_FILE"
 fi
 
-# Now run the Python CLI
+# ✅ Parse config.json to find tool launch.sh paths (Python or jq)
+CONFIG_JSON="$CONFIG_ROOT/config.json"
+if [ -f "$CONFIG_JSON" ]; then
+    # Use jq to extract paths of all launch_sh_path
+    LAUNCH_PATHS=$(jq -r '.tool_config[]?.launch_sh_path // empty' "$CONFIG_JSON")
+    for LAUNCH_PATH in $LAUNCH_PATHS; do
+        if [ -f "$LAUNCH_PATH" ]; then
+            echo "🔧 Sourcing tool: $LAUNCH_PATH"
+            source "$LAUNCH_PATH"
+        else
+            echo "⚠️  Skipping missing launch.sh: $LAUNCH_PATH"
+        fi
+    done
+else
+    echo "⚠️  Config not found: $CONFIG_JSON"
+fi
+
+# 🐍 Run the CLI
 PYTHON=$(which python3)
-SCRIPT="$HOME/Logic_Lance/flow_gui/main.py"
+SCRIPT="$LOGICLANCE_ROOT/flow_gui/main.py"
 
 if [ ! -f "$SCRIPT" ]; then
-    echo "Error: CLI script not found at $SCRIPT"
+    echo "❌ Error: CLI script not found at $SCRIPT"
     exit 1
 fi
 

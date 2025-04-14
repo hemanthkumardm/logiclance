@@ -3,6 +3,7 @@ import os
 import json
 import csv
 import re
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import ( # type: ignore
     QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem,
     QPushButton, QFileDialog, QMessageBox, QHBoxLayout, QLineEdit, QComboBox
@@ -11,9 +12,11 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtCore import Qt
 
 class ModifyProjectWindow(QWidget):
-    def __init__(self):
+    def __init__(self, project_name=None):
         super().__init__()
-        self.setWindowTitle("Modify Project - Logic Lance")
+        self.project_name = project_name
+        self.setWindowTitle("Modify Project")
+
         self.setGeometry(100, 100, 1000, 600)
         self.setup_ui()
 
@@ -50,12 +53,37 @@ class ModifyProjectWindow(QWidget):
 
         layout.addLayout(button_layout)
 
+        # Data directory file management
+        self.data_dir = os.path.join("projects", f"{self.project_name}", "data")
+        os.makedirs(self.data_dir, exist_ok=True)
+
+        self.file_list = QTableWidget()
+        self.file_list.setColumnCount(1)
+        self.file_list.setHorizontalHeaderLabels(["Data Directory Files"])
+        self.refresh_file_list()
+        layout.addWidget(self.file_list)
+
+        file_button_layout = QHBoxLayout()
+
+        self.upload_btn = QPushButton("📤 Add File")
+        self.upload_btn.clicked.connect(self.upload_file)
+        file_button_layout.addWidget(self.upload_btn)
+
+        self.delete_btn = QPushButton("🗑️ Delete Selected File")
+        self.delete_btn.clicked.connect(self.delete_selected_file)
+        file_button_layout.addWidget(self.delete_btn)
+
+        layout.addLayout(file_button_layout)
+
+        self.file_list.cellDoubleClicked.connect(self.toggle_folder_expansion)
+        self.expanded_dirs = set()  # Track expanded directories
+
         self.setLayout(layout)
 
         self.load_data()
 
     def load_data(self):
-        self.config_path = os.path.join("configs", "setup_config.json")
+        self.config_path = os.path.join("configs", "projects", f"{self.project_name}", "config.json")
         if not os.path.exists(self.config_path):
             QMessageBox.critical(self, "Error", "setup_config.json not found.")
             return
@@ -134,6 +162,143 @@ class ModifyProjectWindow(QWidget):
             if name_item and email_item:
                 match = text.lower() in name_item.text().lower() or text.lower() in email_item.text().lower()
                 self.table.setRowHidden(row, not match)
+
+
+    
+    def refresh_file_list(self):
+        self.file_list.setRowCount(0)
+        self.populate_file_list(self.data_dir, indent=0)
+
+    def populate_file_list(self, directory, indent=0):
+        try:
+            entries = sorted(os.listdir(directory))
+            for entry in entries:
+                full_path = os.path.join(directory, entry)
+                row = self.file_list.rowCount()
+                self.file_list.insertRow(row)
+
+                if os.path.isdir(full_path):
+                    display_text = "    " * indent + f"[DIR] {entry}"
+                else:
+                    display_text = "    " * indent + entry
+
+                item_widget = QTableWidgetItem(display_text)
+                item_widget.setData(Qt.UserRole, full_path)
+                item_widget.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                self.file_list.setItem(row, 0, item_widget)
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error loading directory: {e}")
+
+
+
+    def upload_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select File to Upload")
+        if file_path:
+            try:
+                dest_path = os.path.join(self.data_dir, os.path.basename(file_path))
+                if os.path.exists(dest_path):
+                    QMessageBox.warning(self, "File Exists", "File already exists. Choose another file.")
+                    return
+                with open(file_path, 'rb') as src, open(dest_path, 'wb') as dst:
+                    dst.write(src.read())
+                QMessageBox.information(self, "Success", "File uploaded successfully.")
+                self.refresh_file_list()
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to upload file: {e}")
+
+    def delete_selected_file(self):
+        selected_row = self.file_list.currentRow()
+        if selected_row < 0:
+            QMessageBox.warning(self, "Warning", "No file or folder selected.")
+            return
+
+        file_item = self.file_list.item(selected_row, 0)
+        if not file_item:
+            return
+
+        label = file_item.text()
+        if label.startswith("[DIR] "):
+            name = label[6:]
+        else:
+            name = label
+
+        path = os.path.join(self.data_dir, name)
+
+        confirm = QMessageBox.question(
+            self, "Confirm Delete",
+            f"Are you sure you want to delete '{name}'?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if confirm == QMessageBox.Yes:
+            try:
+                if os.path.isdir(path):
+                    import shutil
+                    shutil.rmtree(path)
+                else:
+                    os.remove(path)
+                self.refresh_file_list()
+                QMessageBox.information(self, "Deleted", f"{name} has been deleted.")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to delete: {e}")
+
+
+    def toggle_folder_expansion(self, row, column):
+        item = self.file_list.item(row, column)
+        if not item:
+            return
+
+        path = item.data(Qt.UserRole)
+        if not os.path.isdir(path):
+            return  # only folders can be expanded
+
+        # Check if already expanded
+        if path in self.expanded_dirs:
+            self.collapse_folder(path)
+            self.expanded_dirs.remove(path)
+        else:
+            self.expand_folder(path, row, indent=self.get_indent_level(item) + 1)
+            self.expanded_dirs.add(path)
+
+    def get_indent_level(self, item):
+        text = item.text()
+        return (len(text) - len(text.lstrip())) // 4  # 4 spaces per indent
+
+    def expand_folder(self, folder_path, row_index, indent):
+        try:
+            entries = sorted(os.listdir(folder_path))
+            for i, entry in enumerate(entries):
+                full_path = os.path.join(folder_path, entry)
+                self.file_list.insertRow(row_index + 1 + i)
+
+                if os.path.isdir(full_path):
+                    display_text = "    " * indent + f"[DIR] {entry}"
+                else:
+                    display_text = "    " * indent + entry
+
+                item_widget = QTableWidgetItem(display_text)
+                item_widget.setData(Qt.UserRole, full_path)
+                item_widget.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                self.file_list.setItem(row_index + 1 + i, 0, item_widget)
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to expand folder: {e}")
+
+    def collapse_folder(self, folder_path):
+        rows_to_remove = []
+        for row in range(self.file_list.rowCount()):
+            item = self.file_list.item(row, 0)
+            if not item:
+                continue
+            item_path = item.data(Qt.UserRole)
+            if item_path and item_path.startswith(folder_path) and item_path != folder_path:
+                rows_to_remove.append(row)
+
+        # Remove from bottom to avoid row shifting issues
+        for row in reversed(rows_to_remove):
+            self.file_list.removeRow(row)
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

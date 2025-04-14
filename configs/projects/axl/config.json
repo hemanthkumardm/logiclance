@@ -1,8 +1,5 @@
 {
-    "org_name": "sad",
-    "location": "asd",
-    "contact": "",
-    "admin_name": "sa",
+    "admin_name": "hemanth",
     "admin_email": "hemanth@gmail.com",
     "password": "de5f9eb68e89dfc04ae5380bccc82d94581dc3f51152f2cae24d761742bdefab",
     "employees": [
@@ -84,18 +81,17 @@
             "team": "pd"
         }
     ],
-    "project_name": "test",
     "tech_node": "180nm",
     "rtl_dir": "/mnt/data/hemanth/GeMM_Core/rtl",
     "lef_dir": "/mnt/data/hemanth/GeMM_Core/rtl",
     "lib_dir": "/mnt/data/hemanth/GeMM_Core/rtl",
     "sdc_dir": "/mnt/data/hemanth/GeMM_Core/rtl",
-    "scripts_dir": "",
+    "scripts_dir": "/mnt/data/hemanth/GeMM_Core/rtl",
     "eda_tool": "Cadence",
     "tool_config": [
         {
             "tool": "Cadence",
-            "launch_sh_path": "/home/hemanth/Logic_Lance/flow_gui/configs/launch_cadence_0.sh"
+            "launch_sh_path": "/home/hemanth/Logic_Lance/configs/projects/axl/cadence_launch.sh"
         }
     ]
 }

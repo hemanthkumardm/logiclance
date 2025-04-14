@@ -1,0 +1,134 @@
+{
+  "flows": {
+    "synthesis": {
+      "tools": {
+        "cadence": {
+          "tool": "genus",
+          "version": "231",
+          "script": "scripts/cadence/synthesis.tcl"
+        },
+        "synopsys": {
+          "tool": "dc_shell",
+          "version": "O-2022.09",
+          "script": "scripts/synopsys/synthesis.tcl"
+        },
+        "openlane": {
+          "tool": "yosys",
+          "version": "v0.15",
+          "script": "scripts/openlane/synthesis.tcl"
+        }
+      },
+      "dependencies": []
+    },
+    "placement": {
+      "tools": {
+        "cadence": {
+          "tool": "innovus",
+          "version": "231",
+          "script": "scripts/cadence/placement.tcl"
+        },
+        "openlane": {
+          "tool": "openroad",
+          "version": "2024.01",
+          "script": "scripts/openlane/placement.tcl"
+        }
+      },
+      "dependencies": [
+        "synthesis"
+      ]
+    },
+    "cts": {
+      "tools": {
+        "cadence": {
+          "tool": "innovus",
+          "version": "231",
+          "script": "scripts/cadence/cts.tcl"
+        },
+        "openlane": {
+          "tool": "openroad",
+          "version": "2024.01",
+          "script": "scripts/openlane/cts.tcl"
+        }
+      },
+      "dependencies": [
+        "placement"
+      ]
+    },
+    "routing": {
+      "tools": {
+        "cadence": {
+          "tool": "innovus",
+          "version": "231",
+          "script": "scripts/cadence/routing.tcl"
+        },
+        "openlane": {
+          "tool": "openroad",
+          "version": "2024.01",
+          "script": "scripts/openlane/routing.tcl"
+        }
+      },
+      "dependencies": [
+        "cts"
+      ]
+    },
+    "signoff": {
+      "tools": {
+        "cadence": {
+          "tool": "innovus",
+          "version": "231",
+          "script": "scripts/cadence/signoff.tcl"
+        },
+        "openlane": {
+          "tool": "openroad",
+          "version": "2024.01",
+          "script": "scripts/openlane/signoff.tcl"
+        }
+      },
+      "dependencies": [
+        "routing"
+      ]
+    },
+    "timing_analysis": {
+      "tools": {
+        "cadence": {
+          "tool": "tempus",
+          "version": "231",
+          "script": "scripts/cadence/timing_analysis.tcl"
+        },
+        "synopsys": {
+          "tool": "primeTime",
+          "version": "O-2022.09",
+          "script": "scripts/synopsys/timing_analysis.tcl"
+        },
+        "openlane": {
+          "tool": "openSTA",
+          "version": "2024.01",
+          "script": "scripts/openlane/timing_analysis.tcl"
+        }
+      },
+      "dependencies": [
+        "signoff"
+      ]
+    },
+    "pnr": {
+      "alias_for": [
+        "placement",
+        "cts",
+        "routing"
+      ]
+    }
+  },
+  "project_name": "axl",
+  "rtl_paths": [
+    "/home/hemanth/Logic_Lance/projects/axl/data/rtl"
+  ],
+  "lib_paths": [
+    "/home/hemanth/Logic_Lance/projects/axl/data/lib"
+  ],
+  "lef_paths": [
+    "/home/hemanth/Logic_Lance/projects/axl/data/lef"
+  ],
+  "sdc_path": [
+    "/home/hemanth/Logic_Lance/projects/axl/data/sdc"
+  ]
+}

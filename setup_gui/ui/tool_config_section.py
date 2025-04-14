@@ -14,7 +14,8 @@ import shutil
 class ToolConfigSection(QWidget):
     toolConfigSaved = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, project_name=None):
+        self.project_name = project_name
         super().__init__()
         self.tools = ["Cadence", "Synopsys", "Open Source"]
         self.tool_entries = []
@@ -115,7 +116,7 @@ class ToolConfigSection(QWidget):
 
 
     def get_data(self):
-        config_dir = os.path.join(os.getcwd(), "flow_gui", "configs")
+        config_dir = os.path.join(os.getcwd(), "configs", "projects", f"{self.project_name}")
         os.makedirs(config_dir, exist_ok=True)
 
         tool_config = []
@@ -125,7 +126,9 @@ class ToolConfigSection(QWidget):
             launch_path = entry["launch_input"].text().strip()
 
             if launch_path and os.path.exists(launch_path):
-                dest_filename = f"launch_{tool.lower()}_{idx}.sh"
+                safe_tool_name = tool.lower().replace(" ", "_")
+                dest_filename = f"{safe_tool_name}_launch.sh"
+
                 dest_path = os.path.join(config_dir, dest_filename)
                 try:
                     shutil.copy(launch_path, dest_path)

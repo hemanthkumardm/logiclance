@@ -12,26 +12,14 @@ from ui.new_project import NewProjectWindow
 
 
 class PostLoginWindow(QWidget):
-    def __init__(self):
+    def __init__(self, project_name=None):
         super().__init__()
         self.setWindowTitle("Select Action")
         self.setGeometry(300, 300, 350, 160)
 
-        self.label = QLabel("What would you like to do?")
-        self.label.setAlignment(Qt.AlignCenter)
-
-        self.modify_btn = QPushButton("🛠 Modify Project")
-        self.modify_btn.setStyleSheet("background-color: #f0ad4e; font-weight: bold; padding: 10px;")
-
-        self.new_btn = QPushButton("✨ Create New Project")
-        self.new_btn.setStyleSheet("background-color: #5cb85c; font-weight: bold; padding: 10px;")
-
-        self.modify_btn.clicked.connect(self.modify_project)
-        self.new_btn.clicked.connect(self.create_new_project)
 
         btn_layout = QHBoxLayout()
         btn_layout.addWidget(self.modify_btn)
-        btn_layout.addWidget(self.new_btn)
 
         layout = QVBoxLayout()
         layout.addWidget(self.label)
@@ -44,15 +32,12 @@ class PostLoginWindow(QWidget):
         self.modify_window.show()
         self.close()
 
-    def create_new_project(self):
-        self.new_project_window = NewProjectWindow()
-        self.new_project_window.show()
-        self.close()
 
 
 class AdminLogin(QWidget):
-    def __init__(self):
+    def __init__(self, project_name=None):
         super().__init__()
+        self.project_name = project_name
         self.setWindowTitle("Admin Login")
         self.setGeometry(200, 200, 350, 180)
 
@@ -106,9 +91,9 @@ class AdminLogin(QWidget):
         username = self.username_input.text().strip()
         password = self.password_input.text().strip()
 
-        config_path = os.path.join("configs", "setup_config.json")
+        config_path = os.path.join("configs", "projects", f"{self.project_name}", "config.json")
         if not os.path.exists(config_path):
-            QMessageBox.critical(self, "Error", "setup_config.json not found.")
+            QMessageBox.critical(self, "Error", "config.json not found.")
             return
 
         try:
@@ -128,10 +113,11 @@ class AdminLogin(QWidget):
         else:
             QMessageBox.critical(self, "Login Failed", "Invalid username or password.")
 
+
     def launch_post_login_options(self):
         self.close()
-        self.post_window = PostLoginWindow()
-        self.post_window.show()
+        self.modify_window = ModifyProjectWindow(project_name=self.project_name)
+        self.modify_window.show()
 
 
 if __name__ == "__main__":

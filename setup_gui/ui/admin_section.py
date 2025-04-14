@@ -10,7 +10,7 @@ from shutil import copyfile
 import os
 import re 
 import hashlib
-
+import configparser
 
 
 REQUIRED_HEADERS = [
@@ -21,7 +21,8 @@ REQUIRED_HEADERS = [
 class AdminSection(QWidget):
     adminSaved = pyqtSignal()  # Signal to trigger next page
 
-    def __init__(self):
+    def __init__(self, project_name=None):
+        self.project_name = project_name
         super().__init__()
         self.initUI()
 
@@ -145,13 +146,6 @@ class AdminSection(QWidget):
                 self.table.setWordWrap(True)
                 self.table.setStyleSheet("QTableWidget::item { padding: 4px; }")
 
-            # Save a copy
-            # Save table content (not just uploaded file) to flow_gui/employee_details.csv
-            # REMOVE this block from upload_csv():
-            # Save a copy
-            os.makedirs("flow_gui", exist_ok=True)
-            save_path = os.path.join("flow_gui", "employee_details.csv")
-
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to read CSV: {e}")
 
@@ -168,9 +162,12 @@ class AdminSection(QWidget):
             self.re_pwd_input.text().strip()
         ])
     
+
     def save_table_to_csv(self):
-        os.makedirs("flow_gui/configs", exist_ok=True)
-        save_path = os.path.join("configs", "employee_details.csv")
+
+        # Build CSV file path using project name
+        save_path = os.path.join("configs", "projects", f"{self.project_name}", "employees.csv")
+
         try:
             with open(save_path, "w", newline='') as csvfile:
                 writer = csv.writer(csvfile)
@@ -195,6 +192,7 @@ class AdminSection(QWidget):
 
                         row_data.append(value)
                     writer.writerow(row_data)
+
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to save modified CSV: {e}")
 

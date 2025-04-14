@@ -30,32 +30,9 @@ class WelcomeWindow(QWidget):
         welcome_label.setStyleSheet("color: white;") 
         welcome_label.setAlignment(Qt.AlignLeft)
         
-        button_layout = QHBoxLayout()
-        button_layout.setSpacing(10)  # Reduce space between buttons
-        
-        # Create buttons with a cleaner look
-        new_user_button = QPushButton("New User")
-        new_user_button.setFont(QFont("Georgia", 14))
-        new_user_button.setFixedSize(QSize(120, 40))  # Reduce button size
-        new_user_button.setStyleSheet(
-            "color: black; background-color: white; border-radius: 5px;"
-        )
-        new_user_button.setCursor(Qt.PointingHandCursor)
-        
-        login_button = QPushButton("Login")
-        login_button.setFont(QFont("Georgia", 14))
-        login_button.setFixedSize(QSize(120, 40))  # Reduce button size
-        login_button.setStyleSheet(
-            "color: black; background-color: white; border-radius: 5px;"
-        )
-        login_button.setCursor(Qt.PointingHandCursor)
-        
-        # Add buttons to layout
-        button_layout.addWidget(new_user_button)
-        button_layout.addWidget(login_button)
-        
+
         layout.addWidget(welcome_label)
-        layout.addLayout(button_layout)
+
 
         # Footer Section with same width but smaller height
         footer = QFrame()
@@ -81,7 +58,3 @@ class WelcomeWindow(QWidget):
         layout.addLayout(footer_container)
 
         self.setLayout(layout)
-
-        # Correct variable names here
-        self.btn_new_user = new_user_button
-        self.btn_login = login_button

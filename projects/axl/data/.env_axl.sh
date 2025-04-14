@@ -1,0 +1,10 @@
+export PROJECT_NAME=axl
+export MAIN_ROOT=/home/hemanth/Logic_Lance
+export CONFIG_ROOT=/home/hemanth/Logic_Lance/configs/projects/axl
+export RTL_PATH=/home/hemanth/Logic_Lance/projects/axl/data/rtl
+export LIB_PATH=/home/hemanth/Logic_Lance/projects/axl/data/lib
+export LEF_PATH=/home/hemanth/Logic_Lance/projects/axl/data/lef
+export SDC_PATH=/home/hemanth/Logic_Lance/projects/axl/data/sdc
+export REPORTS_PATH=/home/hemanth/Logic_Lance/projects/axl/data/reports
+export SCRIPTS_PATH=/home/hemanth/Logic_Lance/projects/axl/data/scripts
+export CONFIG_PATH=/home/hemanth/Logic_Lance/configs/projects/axl/config.json

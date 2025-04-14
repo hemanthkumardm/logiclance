@@ -1,12 +1,11 @@
 {
-    "allow_user_script_override": true,
     "flows": {
       "synthesis": {
         "tools": {
           "cadence": {
             "tool": "genus",
             "version": "231",
-            "script": "scripts/cadence/synthesis.tcl"
+            "script": "flow_gui/scripts/cadence/synthesis/synthesis.tcl"
           },
           "synopsys": {
             "tool": "dc_shell",
@@ -16,7 +15,7 @@
           "openlane": {
             "tool": "yosys",
             "version": "v0.15",
-            "script": "scripts/openlane/synthesis.tcl"
+            "script": "flow_gui/scripts/openlane/synthesis/synthesis.tcl"
           }
         },
         "dependencies": []
