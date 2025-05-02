@@ -5,6 +5,7 @@ import readline
 import json
 import getpass
 import os
+import shutil
 import subprocess
 import hashlib
 import csv
@@ -12,6 +13,7 @@ from cli.logiclance_terminal import terminal_shell
 
 
 def show_logiclance_banner():
+    
     banner = r"""
  /----------------------------------------------------------------------------\
  |                                                                            |
@@ -90,8 +92,69 @@ def verify_password(input_password, hashed_password):
     return hashlib.sha256(input_password.encode()).hexdigest() == hashed_password
 
 
+def check_tool_installation():
+    print("\n🧪 Verifying EDA Tool Installations")
+    print("-" * 50)
+
+    CONFIG_ROOT = os.environ.get("CONFIG_ROOT")
+    if not CONFIG_ROOT:
+        print("❌ CONFIG_ROOT environment variable not set.")
+        return
+
+    config_path = os.path.join(CONFIG_ROOT, "config.json")
+    if not os.path.exists(config_path):
+        print(f"❌ Config file not found at: {config_path}")
+        return
+
+    # ✅ Basic tool-binary mapping
+    tool_binary_map = {
+        "cadence": ["genus", "innovus"],
+        "synopsys": ["dc_shell", "icc2_shell"],
+        "openlane": ["flow.tcl"],
+        "yosys": ["yosys"],
+        "openroad": ["openroad"],
+        "verilator": ["verilator"]
+    }
+
+    try:
+        with open(config_path, "r") as f:
+            config = json.load(f)
+
+        # 🔍 Collect tools from tool_config
+        configured_tools = []
+        for tool_entry in config.get("tool_config", []):
+            tool_names = tool_entry.get("tool", "")
+            if isinstance(tool_names, str):
+                configured_tools += [t.strip().lower() for t in tool_names.split(",")]
+
+        # 🧩 Add open-source tools manually to always check
+        configured_tools += ["yosys", "openlane", "openroad", "verilator"]
+        unique_tools = sorted(set(configured_tools))
+
+        for tool in unique_tools:
+            binaries = tool_binary_map.get(tool, [])
+            if not binaries:
+                print(f"⚠️ Unknown tool: {tool}")
+                continue
+
+            all_found = True
+            for bin_name in binaries:
+                if not shutil.which(bin_name):
+                    print(f"❌ {tool.capitalize()} missing binary: '{bin_name}' (not in $PATH)")
+                    all_found = False
+                else:
+                    print(f"✅ {tool.capitalize()} binary '{bin_name}' found")
+
+            if all_found:
+                print(f"🎯 {tool.capitalize()} is fully installed.\n")
+
+    except Exception as e:
+        print(f"❌ Error reading config.json: {e}")
+
+
 def main():
     show_logiclance_banner()
+    check_tool_installation()
     
 
     if len(sys.argv) != 3:
@@ -124,6 +187,7 @@ def main():
     
 
     # 🖥️ Launch Logic Lance interactive shell
+    
     terminal_shell(user, project_name)
 
 

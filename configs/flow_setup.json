@@ -5,7 +5,7 @@
           "cadence": {
             "tool": "genus",
             "version": "231",
-            "script": "flow_gui/scripts/cadence/synthesis/synthesis.tcl"
+            "script": "flow_gui/scripts/cadence/synthesis/START.tcl"
           },
           "synopsys": {
             "tool": "dc_shell",
@@ -18,7 +18,15 @@
             "script": "flow_gui/scripts/openlane/synthesis/synthesis.tcl"
           }
         },
-        "dependencies": []
+        "dependencies": [],
+        "order": [
+        "setup-session.tcl",
+        "designer-interface.tcl",
+        "read-design.tcl",
+        "constraints.tcl",
+        "compile.tcl",
+        "generate-results.tcl"
+        ]
       },
       "placement": {
         "tools": {

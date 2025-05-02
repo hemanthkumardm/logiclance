@@ -3,7 +3,7 @@ import readline
 import subprocess
 import json
 import sys
-from .commands import run_synthesis, setEdaTool, getEdaTool
+from .commands import run_synthesis, setEdaTool, getEdaTool, project_info
 
 
 HISTORY_FILE = os.path.expanduser("~/.logiclance_history")
@@ -35,27 +35,29 @@ def terminal_shell(user, project_name):
 
     print(f"\n🔓 Welcome to Logic Lance Shell, {user['name'].capitalize()}!")
     print(f" Project       : {os.environ.get('PROJECT_NAME', 'N/A')}")
-    print(f" Main Root     : {os.environ.get('MAIN_ROOT', 'N/A')}")
-    print(f" Config Root   : {os.environ.get('CONFIG_ROOT', 'N/A')}")
-    print(f" RTL Path      : {os.environ.get('RTL_PATH', 'N/A')}")
-    print(f" LIB Path      : {os.environ.get('LIB_PATH', 'N/A')}")
-    print(f" LEF Path      : {os.environ.get('LEF_PATH', 'N/A')}")
-    print(f" SDC Path      : {os.environ.get('SDC_PATH', 'N/A')}")
-    print(f" Reports Dir   : {os.environ.get('REPORTS_PATH', 'N/A')}")
-    print(f" Scripts Dir   : {os.environ.get('SCRIPTS_PATH', 'N/A')}")
-    print(f" Config Path   : {os.environ.get('CONFIG_PATH', 'N/A')}")
+    print(f" MAIN_ROOT     : {os.environ.get('MAIN_ROOT', 'N/A')}")
+    print(f" RTL_PATH      : {os.environ.get('RTL_PATH', 'N/A')}")
+    print(f" LIB_PATH      : {os.environ.get('LIB_PATH', 'N/A')}")
+    print(f" LEF_PATH      : {os.environ.get('LEF_PATH', 'N/A')}")
+    print(f" SDC_PATH      : {os.environ.get('SDC_PATH', 'N/A')}")
+    print(f" OUTPUTS_PATH   : {os.environ.get('OUTPUTS_PATH', 'N/A')}")
+    print(f" REPORTS_PATH   : {os.environ.get('REPORTS_PATH', 'N/A')}")
+    print(f" LOGS_PATH   : {os.environ.get('LOG_PATH', 'N/A')}")
     
-    config_path = os.path.join("configs", "projects", project_name, "config.json")
+    
+    config_root = os.environ.get("CONFIG_ROOT")
+    config_path = os.path.join(config_root, "config.json")
+
 
     with open(config_path, "r") as f:
         project_config = json.load(f)
     eda_tool = project_config.get("eda_tool", "N/A")
 
-    print(f" EDA Tool      : {eda_tool}")
+    print(f" EDA Tool      : {eda_tool} and Openlane")
     print(f" Logic Lance(v): {os.environ.get('VERSION', 'N/A')}")
     print(f" Developer     :  Hemanth Kumar DM, dmhemanthkumar7@gmail.com")
 
-    print("\nType 'help' to see commands. Type 'exit' to quit.\n")
+    print("\nType 'help' to see commands, project to see paths. Type 'exit' to quit.\n")
 
     setup_readline()
     command_counter = 1
@@ -74,14 +76,26 @@ def terminal_shell(user, project_name):
             break
 
         if base_cmd == "run_synthesis":
-            run_synthesis(project_name)
+            if "-f" in args:
+                try:
+                    idx = args.index("-f")
+                    script_path = args[idx + 1]
+                    run_synthesis(script_flag="-f", custom_script_path=script_path)
+                except IndexError:
+                    print("❌ Error: Please provide a script path after -f.")
+            else:
+                run_synthesis()
             command_counter += 1
+
         elif base_cmd == "setEdaTool" and args:
             setEdaTool(args[0])
             command_counter += 1
         elif base_cmd == "getEdaTool":
-            print(f"🔍 Current EDA Tool: {get_eda_tool(project_name)}")
+            print(f"🔍 Current EDA Tool: {getEdaTool()}")
             command_counter += 1
+        elif base_cmd == "project":
+            project_info(project_name)
+
         else:
             try:
                 subprocess.run(cmd, shell=True)

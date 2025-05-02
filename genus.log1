@@ -1,0 +1,45 @@
+Cadence Genus(TM) Synthesis Solution.
+Copyright 2025 Cadence Design Systems, Inc. All rights reserved worldwide.
+Cadence and the Cadence logo are registered trademarks and Genus is a trademark
+of Cadence Design Systems, Inc. in the United States and other countries.
+
+[02:05:59.070569] Configured Lic search path (23.02-s006): 5281@10.180.60.103
+
+Version: 23.14-s090_1, built Thu Feb 27 07:49:50 PST 2025
+Options: -files /home/hemanth/Logic_Lance/test.tcl 
+Date:    Mon Apr 21 02:05:59 2025
+Host:    e2e-79-181.sandlogic (x86_64 w/Linux 4.18.0-553.47.1.el8_10.x86_64) (1core*230cpus*230physical cpus*AMD EPYC-Milan Processor 512KB) (527776292KB)
+PID:     1264027
+OS:      Red Hat Enterprise Linux 8.10 (Ootpa)
+
+Checking out license: Genus_Synthesis
+[02:05:59.461912] Periodic Lic check successful
+[02:05:59.986216] Feature usage summary:
+[02:05:59.986217] Genus_Synthesis
+
+
+
+***********************************************************************************************************
+***********************************************************************************************************
+
+
+
+Finished executable startup (1 second elapsed).
+
+Loading tool scripts...
+Finished loading tool scripts (15 seconds elapsed).
+
+#@ Processing -files option
+@genus:root: 1> source /home/hemanth/Logic_Lance/test.tcl
+#@ Begin verbose source /home/hemanth/Logic_Lance/test.tcl
+@file(test.tcl) 1: puts "hello"
+hello
+#@ End verbose source /home/hemanth/Logic_Lance/test.tcl
+@genus:root: 2> exit
+
+Lic Summary:
+[02:07:40.344571] Cdslmd servers: cadence-dli
+[02:07:40.868897] Feature usage summary:
+[02:07:40.868897] Genus_Synthesis
+
+Normal exit.

@@ -89,7 +89,7 @@ class App:
     
 # Keep these outside the class
 def generate_env_sh(project_name):
-    project_root = os.path.abspath(f"projects/{project_name}/data")
+    project_root = os.path.abspath(f"projects/{project_name}")
     config_root = os.path.abspath(f"configs/projects/{project_name}")
     env_path = os.path.join(project_root, f".env_{project_name}.sh")
 
@@ -97,12 +97,13 @@ def generate_env_sh(project_name):
         "PROJECT_NAME": project_name,
         "MAIN_ROOT": os.path.abspath("."),
         "CONFIG_ROOT": config_root,
-        "RTL_PATH": os.path.join(project_root, "rtl"),
-        "LIB_PATH": os.path.join(project_root, "lib"),
-        "LEF_PATH": os.path.join(project_root, "lef"),
-        "SDC_PATH": os.path.join(project_root, "sdc"),
+        "RTL_PATH": os.path.join(project_root, "data", "rtl"),
+        "LIB_PATH": os.path.join(project_root, "data", "lib"),
+        "LEF_PATH": os.path.join(project_root, "data", "lef"),
+        "SDC_PATH": os.path.join(project_root, "data", "sdc"),
+        "LOG_PATH": os.path.join(project_root, "logs"),
+        "OUTPUTS_PATH": os.path(project_root, "outputs"),
         "REPORTS_PATH": os.path.join(project_root, "reports"),
-        "SCRIPTS_PATH": os.path.join(project_root, "scripts"),
         "CONFIG_PATH": os.path.join(config_root, "config.json")
     }
 
@@ -132,6 +133,12 @@ def update_project_flow_config(project_name):
     flow_config["lib_paths"] = [paths["LIB_PATH"]]
     flow_config["lef_paths"] = [paths["LEF_PATH"]]
     flow_config["sdc_path"] =  [paths["SDC_PATH"]]
+    flow_config["log_path"] = paths["LOG_PATH"]
+    flow_config["outputs_path"] = paths["OUTPUTS_PATH"]
+    flow_config["reports_path"] = paths["REPORTS_PATH"]
+    flow_config["config_path"] = paths["CONFIG_PATH"]
+
+
 
     project_config_dir = f"projects/{project_name}"
     os.makedirs(project_config_dir, exist_ok=True)

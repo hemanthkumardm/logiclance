@@ -1,0 +1,7 @@
+# Cadence Genus(TM) Synthesis Solution, Version 23.14-s090_1, built Feb 27 2025 10:49:50
+
+# Date: Mon Apr 21 01:54:59 2025
+# Host: e2e-79-181.sandlogic (x86_64 w/Linux 4.18.0-553.47.1.el8_10.x86_64) (1core*230cpus*230physical cpus*AMD EPYC-Milan Processor 512KB)
+# OS:   Red Hat Enterprise Linux 8.10 (Ootpa)
+
+source /home/hemanth/Logic_Lance/flow_gui/scripts/cadence/synthesis/synthesis.tcl

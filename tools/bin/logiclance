@@ -27,6 +27,7 @@ PROJECT_NAME="$1"
 LOGICLANCE_ROOT="$HOME/Logic_Lance"
 CONFIG_ROOT="$LOGICLANCE_ROOT/configs/projects/$PROJECT_NAME"
 ENV_FILE="$LOGICLANCE_ROOT/projects/$PROJECT_NAME/data/.env_${PROJECT_NAME}.sh"
+
 # ✅ Export root so Python can use it too
 export LOGICLANCE_ROOT
 export VERSION

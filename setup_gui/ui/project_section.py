@@ -39,8 +39,6 @@ class ProjectSection(QWidget):
         self.lef_path_input = QLineEdit()
         self.lib_path_input = QLineEdit()
         self.sdc_path_input = QLineEdit()
-        self.scripts_path_input = QLineEdit()
-        self.scripts_path_input.setPlaceholderText("optional")
 
         rtl_btn = QPushButton("Browse")
         rtl_btn.clicked.connect(lambda: self.select_directory(self.rtl_path_input))
@@ -50,8 +48,7 @@ class ProjectSection(QWidget):
         lib_btn.clicked.connect(lambda: self.select_directory(self.lib_path_input))
         sdc_btn = QPushButton("Browse")
         sdc_btn.clicked.connect(lambda: self.select_directory(self.sdc_path_input))
-        scripts_btn = QPushButton("Browse")
-        scripts_btn.clicked.connect(lambda: self.select_directory(self.scripts_path_input))
+
 
         self.eda_tool_dropdown = QComboBox()
         self.eda_tool_dropdown.addItems(self.available_tools)
@@ -78,10 +75,6 @@ class ProjectSection(QWidget):
         sdc_layout.addWidget(sdc_btn)
         form_layout.addRow("SDC Directory*", sdc_layout)
 
-        scripts_layout = QHBoxLayout()
-        scripts_layout.addWidget(self.scripts_path_input)
-        scripts_layout.addWidget(scripts_btn)
-        form_layout.addRow("Scripts Directory", scripts_layout)
 
         form_layout.addRow("EDA Tool Used*", self.eda_tool_dropdown)
 
@@ -154,7 +147,6 @@ class ProjectSection(QWidget):
             'lef_dir': self.lef_path_input.text().strip(),
             'lib_dir': self.lib_path_input.text().strip(),
             'sdc_dir': self.sdc_path_input.text().strip(),
-            'scripts_dir': self.scripts_path_input.text().strip(),
             'eda_tool': self.eda_tool_dropdown.currentText()
         }
 
@@ -170,10 +162,7 @@ class ProjectSection(QWidget):
         self.copy_files(self.lef_path_input.text().strip(), os.path.join(data_dir, "lef"), [".lef"])
         self.copy_files(self.lib_path_input.text().strip(), os.path.join(data_dir, "lib"), [".lib"])
         self.copy_files(self.sdc_path_input.text().strip(), os.path.join(data_dir, "sdc"), [".sdc"])
-        # self.copy_files(self.scripts_path_input.setPlaceholderText("optional").text().strip(), os.path.join(user_scripts_dir), [".tcl"])
-        scripts_path = self.scripts_path_input.text().strip()
-        if scripts_path:
-            self.copy_files(scripts_path, os.path.join(user_scripts_dir), [".tcl"])
+
 
         self.projectSaved.emit()
 
@@ -185,7 +174,6 @@ class ProjectSection(QWidget):
             "lef_dir": self.lef_path_input.text().strip(),
             "lib_dir": self.lib_path_input.text().strip(),
             "sdc_dir": self.sdc_path_input.text().strip(),
-            "scripts_dir": self.scripts_path_input.text().strip(),
             "eda_tool": self.eda_tool_dropdown.currentText()
         }
 
