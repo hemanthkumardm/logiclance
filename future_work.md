@@ -1,5 +1,3 @@
-Let’s create a document outlining the future work for the `setup_gui` component of LogicLance, focusing on the industry-level enhancements we discussed. This document will serve as a roadmap for the next version of LogicLance, detailing the goals, features, and implementation strategies to elevate `setup_gui` to meet the standards of top ASIC design industries. The document will be structured for clarity, ensuring that it can guide future development efforts effectively.
-
 ---
 
 # 📜 **LogicLance: Future Work Document for `setup_gui` Enhancements**
