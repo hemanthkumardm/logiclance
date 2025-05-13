@@ -26,3 +26,42 @@
 | **Advantages**            | - High performance for complex designs<br>- Robust support for full-chip workflows<br>- Advanced optimization for timing and power | - Free to use, accessible for small teams<br>- High customization potential<br>- Community-driven development | - Unifies commercial and open-source tools<br>- Advanced automation (Git reflows, CI/CD, HPC)<br>- User-centric features (dual-interface, real-time monitoring)<br>- Cost-effective and scalable |
 | **Disadvantages**         | - High license costs<br>- Complex setup and ecosystem lock-in<br>- Limited automation across multi-tool flows | - Limited scalability for large designs<br>- Less optimized performance<br>- Lacks advanced features and support | - Initial learning curve for setup<br>- Requires proper configuration for optimal tool integration<br>- Dependent on underlying tool performance |
 | **How LogicLance Addresses Gaps** | N/A | N/A | LogicLance overcomes commercial tool costs by supporting open-source alternatives and providing a hybrid model. It enhances open-source scalability with HPC and CI/CD integration, adds advanced automation, security (RBAC, audit logs), and analytics (visual dashboards, team summaries) not natively available in either, and ensures cross-platform compatibility with Docker support. |
+
+
+
+
+
+
+
+
+[Organization: LogicLance]
+       |
+       |
+[Admin] (Full Access)
+       | - Creates teams, configures projects, manages toolchains, assigns roles
+       | - Access: All platform features, logs, reports, analytics
+       | - Limitations: None
+       |
+       |---------------------------------------------------
+       |                          |                      |
+[Manager: Team 1]      [Manager: Team 2]      [Manager: Team 3]
+(Digital Design)       (Verification)         (Layout)
+       | - Monitors work status, assigns tasks, views team reports
+       | - Access: Team progress, flow status, team-specific analytics
+       | - Limitations: Cannot modify project configs or execute flows
+       |                      |                      |
+       |----------------------|                      |
+       |                      |                      |
+[Role Leader]         [Role Leader]          [Role Leader]
+(Engineer 1)          (Engineer 2)           (Engineer 3)
+       | - Executes flows (e.g., synthesis, placement), uploads custom scripts
+       | - Access: Permitted flows, detailed logs, reports
+       | - Limitations: Cannot manage teams or modify project settings
+       |                      |                      |
+       |----------------------|                      |
+       |                      |                      |
+[Role Employee]      [Role Employee]        [Role Employee]
+(Viewer 1)           (Viewer 2)            (Viewer 3)
+       | - Views logs and reports dynamically and graphically
+       | - Access: Read-only logs, graphical reports (e.g., timing graphs, heatmaps)
+       | - Limitations: Cannot execute flows, upload scripts, or modify settings
